@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import caredeviBrand from "../../assets/caredeviBrand.png";
+import {
+  loginSchema,
+  type LoginFormData,
+} from "../../lib/validations/auth.schema";
+import { useLogin } from "../../hooks/useLogin";
 
 const LoginPageUI = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Login attempt:", { email, password });
+  const { mutate: login, isPending, isError, error } = useLogin();
+
+  const onSubmit = (data: LoginFormData) => {
+    login(data);
   };
 
   return (
@@ -20,27 +32,46 @@ const LoginPageUI = () => {
           alt="CareDevi Brand"
           src={caredeviBrand}
         />
-        <div onSubmit={handleLogin} className="min-w-[500px]">
-          <form className="space-y-6">
+        <div className="min-w-[500px]">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
-              <Input
-                id="email"
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 border-2 border-gray-300 focus:border-black focus:ring-black"
-                required
-              />
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-12 border-2 border-gray-300 focus:border-black focus:ring-black"
-                required
-              />
+              {isError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-sm text-red-600">
+                    {error?.message || "Login failed. Please try again."}
+                  </p>
+                </div>
+              )}
+              <div>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  {...register("email")}
+                  className="h-12 border-2 border-gray-300 focus:border-black focus:ring-black"
+                  required
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  {...register("password")}
+                  className="h-12 border-2 border-gray-300 focus:border-black focus:ring-black"
+                  required
+                />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -56,9 +87,10 @@ const LoginPageUI = () => {
 
               <Button
                 type="submit"
-                className="w-40 h-12 bg-black hover:bg-gray-800 text-white text-lg font-semibold rounded-md cursor-pointer"
+                disabled={isPending}
+                className="w-40 h-12 bg-black hover:bg-gray-800 text-white text-lg font-semibold rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Sign In
+                {isPending ? "Signing In..." : "Sign In"}
               </Button>
             </div>
           </form>
