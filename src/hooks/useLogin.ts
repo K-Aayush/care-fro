@@ -12,7 +12,7 @@ export const useLogin = () => {
     onSuccess: (response) => {
       const { user, accessToken, refreshToken } = response.data;
       login(accessToken, refreshToken, user);
-      navigate("/");
+      navigate("/dashboard");
     },
   });
 };

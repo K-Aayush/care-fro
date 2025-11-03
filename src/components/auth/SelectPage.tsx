@@ -2,8 +2,10 @@ import { Button } from "../../components/ui/button";
 import { authButtons } from "../../lib/data";
 import caredeviBrand from "../../assets/caredeviBrand.png";
 import mittus from "../../assets/mittus.png";
+import { useNavigate } from "react-router-dom";
 
 const SelectPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="bg-[#fffdf4] min-h-screen relative">
       <main className="flex flex-col items-center justify-center">
@@ -19,6 +21,7 @@ const SelectPage = () => {
               key={button.id}
               variant={button.variant}
               className={`w-full h-[74px] text-2xl ${button.className}`}
+              onClick={() => navigate(button.link)}
             >
               {button.icon && button.id === "google" && (
                 <img

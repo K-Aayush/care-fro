@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 
 const Home = () => {
@@ -11,9 +12,11 @@ const Home = () => {
           Streamline perscription management , coordinate care, and improbe
           patient outcomes
         </div>
-        <Button className="bg-[#01172e]  cursor-pointer px-6 text-xl py-6">
-          Get Started
-        </Button>
+        <Link to="/login-select">
+          <Button className="bg-[#01172e]  cursor-pointer px-6 text-xl py-6">
+            Get Started
+          </Button>
+        </Link>
       </div>
     </div>
   );
