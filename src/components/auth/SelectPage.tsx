@@ -3,9 +3,29 @@ import { authButtons } from "../../lib/data";
 import caredeviBrand from "../../assets/caredeviBrand.png";
 import mittus from "../../assets/mittus.png";
 import { useNavigate } from "react-router-dom";
+import { useFirebaseAuth } from "../../hooks/useFirebaseAuth";
+import { useEffect } from "react";
+import { initializeFirebase } from "../../lib/firebase/config";
 
 const SelectPage = () => {
   const navigate = useNavigate();
+  const { signInWithGoogle, signInWithApple, isLoading, error } =
+    useFirebaseAuth();
+
+  useEffect(() => {
+    initializeFirebase();
+  }, []);
+
+  const handleButtonClick = (buttonId: string) => {
+    if (buttonId === "google") {
+      signInWithGoogle();
+    } else if (buttonId === "apple") {
+      signInWithApple();
+    } else if (buttonId === "mail") {
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="bg-[#fffdf4] min-h-screen relative">
       <main className="flex flex-col items-center justify-center">
@@ -15,13 +35,19 @@ const SelectPage = () => {
           src={caredeviBrand}
         />
 
+        {error && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md max-w-lg">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+
         <div className="flex flex-col space-y-3 mt-8 w-full px-4 max-w-lg">
           {authButtons.map((button) => (
             <Button
               key={button.id}
               variant={button.variant}
               className={`w-full h-[74px] text-2xl ${button.className}`}
-              onClick={() => navigate(button.link)}
+              onClick={() => handleButtonClick(button.id)}
             >
               {button.icon && button.id === "google" && (
                 <img
@@ -44,7 +70,9 @@ const SelectPage = () => {
                   src={button.icon}
                 />
               )}
-              {button.text}
+              {isLoading && button.id !== "mail"
+                ? "Signing in..."
+                : button.text}
             </Button>
           ))}
         </div>

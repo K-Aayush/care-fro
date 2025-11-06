@@ -39,6 +39,9 @@ export interface UserProfile {
   lastLogin: string;
   createdAt: string;
   updatedAt: string;
+  authProvider?: string;
+  authProviderId?: string;
+  photoURL?: string;
 }
 
 export const authApi = {
